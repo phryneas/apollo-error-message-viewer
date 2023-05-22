@@ -14,9 +14,12 @@
   <script type="module">
     // @ts-check
     async function getErrorMessage(/** @type{string} */ version, /** @type {number} */ id, /** @type {unknown[]} */ args) {
-      /** @type {{ [key: number]: { file: string, condition?: string, message?: string } }} */
-      const data = (await import(`https://cdn.jsdelivr.net/npm/@apollo/client@${version}/invariantErrorCodes.js`)).default;
-      console.log(data)
+      /** @type {{ [key: string]: { [key: number]: { file: string, condition?: string, message?: string } }}} */
+      const invariantErrorCodes = (await import(`https://cdn.jsdelivr.net/npm/@apollo/client@${version}/invariantErrorCodes.js`));
+      const data = /** @type { [key: number]: { file: string, condition?: string, message?: string }} */ {};
+      for (const codes of Object.values(invariantErrorCodes)) {
+        Object.assign(data, codes);
+      }
       if (!data[id]) {
         return { message: "Error message could not be found!" }
       }
